@@ -1,0 +1,17 @@
+[package]
+name = "wudao"
+version = "0.1.0"
+authors = ["Yucklys <yucklys687@outlook.com>"]
+license = "MIT"
+edition = "2021"
+
+[dependencies]
+crossterm = "0.26.1"
+dice_forge = "0.2.2"
+directories = "5.0.1"
+rand = "0.8.5"
+regex = "1.8.4"
+reqwest = { version = "0.11", features = ["blocking"] }
+serde = { version = "1.0.164", features = ["derive"] }
+toml = "0.7.5"
+tui = { package = "ratatui", version = "0.20.1" }
