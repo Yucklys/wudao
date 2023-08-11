@@ -16,5 +16,8 @@ pub mod handler;
 /// Game systems
 pub mod systems;
 
+/// Game actions
+pub mod action;
+
 /// User settings
 pub mod setting;

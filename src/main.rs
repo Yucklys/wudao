@@ -3,10 +3,11 @@ use tui::backend::CrosstermBackend;
 use tui::Terminal;
 use wudao::app::{App, AppResult};
 use wudao::event::{Event, EventHandler};
-use wudao::handler::handle_key_events;
+use wudao::handler::handle_events;
 use wudao::tui::Tui;
 
-fn main() -> AppResult<()> {
+#[tokio::main]
+async fn main() -> AppResult<()> {
     App::sync();
     // Create an application.
     let mut app = App::new();
@@ -14,7 +15,8 @@ fn main() -> AppResult<()> {
     // Initialize the terminal user interface.
     let backend = CrosstermBackend::new(io::stderr());
     let terminal = Terminal::new(backend)?;
-    let events = EventHandler::new(250);
+    let events = EventHandler::new();
+    events.start(250)?;
     let mut tui = Tui::new(terminal, events);
     tui.init()?;
 
@@ -23,11 +25,12 @@ fn main() -> AppResult<()> {
         // Render the user interface.
         tui.draw(&mut app)?;
         // Handle events.
-        match tui.events.next()? {
-            Event::Tick => app.tick(),
-            Event::Key(key_event) => handle_key_events(key_event, &mut app)?,
-            Event::Mouse(_) => {}
-            Event::Resize(_, _) => {}
+        if let Some(event) = tui.events.next().await {
+            match event {
+                Event::Tick => app.tick(),
+                Event::Crossterm(event) => handle_events(event, &mut app)?,
+                Event::Action(_) => {}
+            }
         }
     }
 

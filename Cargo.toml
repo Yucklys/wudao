@@ -6,12 +6,14 @@ license = "MIT"
 edition = "2021"
 
 [dependencies]
-crossterm = "0.26.1"
+crossterm = { version = "0.26.1", features = ["event-stream"] }
 dice_forge = "0.2.2"
 directories = "5.0.1"
+futures = "0.3.28"
 rand = "0.8.5"
 regex = "1.8.4"
 reqwest = { version = "0.11", features = ["blocking"] }
 serde = { version = "1.0.164", features = ["derive"] }
+tokio = { version = "1.29.1", features = ["full"] }
 toml = "0.7.5"
-tui = { package = "ratatui", version = "0.20.1" }
+tui = { package = "ratatui", version = "0.22" }

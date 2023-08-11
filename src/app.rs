@@ -2,7 +2,7 @@ use std::error;
 
 use tui::{backend::Backend, Frame};
 
-use crate::{setting::Setting, ui::scene::Scene};
+use crate::{setting::Setting, ui::scene::SceneType};
 
 /// Application result type.
 pub type AppResult<T> = std::result::Result<T, Box<dyn error::Error>>;
@@ -15,7 +15,7 @@ pub struct App<'a> {
     /// Setting
     pub setting: Setting,
     /// Scene
-    pub scene: Scene<'a>,
+    pub scene: SceneType<'a>,
 }
 
 impl<'a> Default for App<'a> {
@@ -23,7 +23,7 @@ impl<'a> Default for App<'a> {
         Self {
             running: true,
             setting: Setting::default(),
-            scene: Scene::start_menu(),
+            scene: SceneType::start_menu(),
         }
     }
 }
