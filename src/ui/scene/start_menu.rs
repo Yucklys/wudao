@@ -40,6 +40,15 @@ impl<'a> Scene for StartMenuScene<'a> {
             .constraints([Constraint::Ratio(1, 4), Constraint::Ratio(3, 4)].as_ref())
     }
 
+    fn handle_key(&mut self, event: KeyEvent) {
+        let StartMenuScene { start_menu, .. } = self;
+        match event.code {
+            KeyCode::Tab | KeyCode::Char('j') => start_menu.next(),
+            KeyCode::BackTab | KeyCode::Char('k') => start_menu.prev(),
+            _ => {}
+        };
+    }
+
     fn render<B: Backend>(&mut self, frame: &mut Frame<'_, B>) {
         let StartMenuScene {
             start_menu,
@@ -55,14 +64,5 @@ impl<'a> Scene for StartMenuScene<'a> {
                 _ => {}
             }
         }
-    }
-
-    fn handle_key(&mut self, event: KeyEvent) {
-        let StartMenuScene { start_menu, .. } = self;
-        match event.code {
-            KeyCode::Tab | KeyCode::Char('j') => start_menu.next(),
-            KeyCode::BackTab | KeyCode::Char('k') => start_menu.prev(),
-            _ => {}
-        };
     }
 }
