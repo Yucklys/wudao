@@ -1,5 +1,6 @@
 use super::{effect::Effect, target::Target};
 
+#[allow(dead_code)]
 #[derive(Debug)]
 pub struct Skill {
     name: String,

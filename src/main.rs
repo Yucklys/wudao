@@ -1,13 +1,13 @@
 use std::io;
 use tui::backend::CrosstermBackend;
 use tui::Terminal;
-use wudao::app::{App, AppResult};
-use wudao::event::{Event, EventHandler};
-use wudao::handler::handle_events;
+use wudao::app::{App, GameResult};
+use wudao::event::Event;
+use wudao::handler::*;
 use wudao::tui::Tui;
 
 #[tokio::main]
-async fn main() -> AppResult<()> {
+async fn main() -> GameResult<()> {
     App::sync();
     // Create an application.
     let mut app = App::new();
@@ -15,9 +15,8 @@ async fn main() -> AppResult<()> {
     // Initialize the terminal user interface.
     let backend = CrosstermBackend::new(io::stderr());
     let terminal = Terminal::new(backend)?;
-    let events = EventHandler::new();
-    events.start(250)?;
-    let mut tui = Tui::new(terminal, events);
+    let mut tui = Tui::new(terminal);
+    app.init(250)?;
     tui.init()?;
 
     // Start the main loop.
@@ -25,11 +24,11 @@ async fn main() -> AppResult<()> {
         // Render the user interface.
         tui.draw(&mut app)?;
         // Handle events.
-        if let Some(event) = tui.events.next().await {
+        if let Some(event) = app.events.next().await {
             match event {
                 Event::Tick => app.tick(),
-                Event::Crossterm(event) => handle_events(event, &mut app)?,
-                Event::Action(_) => {}
+                Event::Crossterm(event) => handle_term_events(event, &mut app)?,
+                Event::Action(action) => handle_actions(action, &mut app)?,
             }
         }
     }

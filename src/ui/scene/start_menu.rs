@@ -1,4 +1,5 @@
 use crate::{
+    action::Action,
     setting::read_file,
     ui::{
         component::Component,
@@ -40,13 +41,23 @@ impl<'a> Scene for StartMenuScene<'a> {
             .constraints([Constraint::Ratio(1, 4), Constraint::Ratio(3, 4)].as_ref())
     }
 
-    fn handle_key(&mut self, event: KeyEvent) {
+    fn handle_key(&mut self, event: KeyEvent) -> Vec<Action> {
         let StartMenuScene { start_menu, .. } = self;
+        let mut actions = Vec::new();
         match event.code {
             KeyCode::Tab | KeyCode::Char('j') => start_menu.next(),
             KeyCode::BackTab | KeyCode::Char('k') => start_menu.prev(),
+            KeyCode::Enter => {
+                if let Some(i) = start_menu.selected() {
+                    match i {
+                        1 => actions.push(Action::StartNewGame),
+                        _ => {}
+                    }
+                }
+            }
             _ => {}
         };
+        actions
     }
 
     fn render<B: Backend>(&mut self, frame: &mut Frame<'_, B>) {

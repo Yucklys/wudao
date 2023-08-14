@@ -1,4 +1,4 @@
-use crate::{action::Action, app::AppResult};
+use crate::{action::Action, app::GameResult};
 use crossterm::event::{Event as CrosstermEvent, EventStream};
 use futures::StreamExt;
 use std::time::Duration;
@@ -20,7 +20,6 @@ pub enum Event {
 }
 
 /// Terminal event handler.
-#[allow(dead_code)]
 #[derive(Debug)]
 pub struct EventHandler {
     /// Event sender channel.
@@ -39,7 +38,7 @@ impl EventHandler {
         }
     }
 
-    pub fn start(&self, tick_rate: u64) -> AppResult<()> {
+    pub fn start(&self, tick_rate: u64) -> GameResult<()> {
         let tick_rate = Duration::from_millis(tick_rate);
         self.spawn_tick_task(tick_rate);
         self.spawn_crossterm_task();
@@ -73,6 +72,17 @@ impl EventHandler {
         tokio::spawn(async move {
             while let Some(Ok(event)) = events.next().await {
                 if tx.send(Event::Crossterm(event)).await.is_err() {
+                    break;
+                }
+            }
+        })
+    }
+
+    pub fn spawn_action_task(&self, actions: Vec<Action>) -> JoinHandle<()> {
+        let tx = self.tx.clone();
+        tokio::spawn(async move {
+            for action in actions {
+                if tx.send(Event::Action(action)).await.is_err() {
                     break;
                 }
             }

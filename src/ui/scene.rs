@@ -4,6 +4,8 @@ pub mod upgrade_character;
 use crossterm::event::KeyEvent;
 use tui::{backend::Backend, layout::Layout, Frame};
 
+use crate::action::Action;
+
 use self::{start_menu::StartMenuScene, upgrade_character::UpgradeCharacterScene};
 
 pub trait Scene {
@@ -13,7 +15,7 @@ pub trait Scene {
     {
         Layout::default()
     }
-    fn handle_key(&mut self, event: KeyEvent);
+    fn handle_key(&mut self, event: KeyEvent) -> Vec<Action>;
     fn render<B: Backend>(&mut self, frame: &mut Frame<B>);
 }
 
@@ -28,7 +30,11 @@ impl<'a> SceneType<'a> {
         Self::StartMenu(StartMenuScene::new())
     }
 
-    pub fn handle_key(&mut self, event: KeyEvent) {
+    pub fn upgrade_character() -> Self {
+        Self::UpgradeCharacter(UpgradeCharacterScene::default())
+    }
+
+    pub fn handle_key(&mut self, event: KeyEvent) -> Vec<Action> {
         match self {
             Self::StartMenu(scene) => scene.handle_key(event),
             Self::UpgradeCharacter(scene) => scene.handle_key(event),
