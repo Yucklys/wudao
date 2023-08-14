@@ -21,6 +21,10 @@ pub fn handle_term_events(event: CrosstermEvent, app: &mut App) -> GameResult<()
                         app.quit();
                     }
                 }
+                // Show logs
+                KeyCode::F(1) => {
+                    app.show_log = !app.show_log;
+                }
                 // Other handlers you could add here.
                 _ => {}
             }

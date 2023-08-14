@@ -37,7 +37,6 @@ impl<'a> Scene for StartMenuScene<'a> {
     fn layout() -> Layout {
         Layout::default()
             .direction(Direction::Horizontal)
-            .margin(1)
             .constraints([Constraint::Ratio(1, 4), Constraint::Ratio(3, 4)].as_ref())
     }
 

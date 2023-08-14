@@ -1,9 +1,14 @@
 use std::error;
 
 use crossterm::event::KeyEvent;
+use log::*;
 use tui::{backend::Backend, Frame};
 
-use crate::{event::EventHandler, setting::Setting, ui::scene::SceneType};
+use crate::{
+    event::EventHandler,
+    setting::Setting,
+    ui::{log::LogPopup, popup::show_popup, scene::SceneType},
+};
 
 /// Game result type.
 pub type GameResult<T> = std::result::Result<T, Box<dyn error::Error>>;
@@ -19,6 +24,8 @@ pub struct App<'a> {
     pub scene: SceneType<'a>,
     /// Event handler
     pub events: EventHandler,
+    /// Show log
+    pub show_log: bool,
 }
 
 impl<'a> Default for App<'a> {
@@ -28,6 +35,7 @@ impl<'a> Default for App<'a> {
             setting: Setting::default(),
             scene: SceneType::start_menu(),
             events: EventHandler::new(),
+            show_log: false,
         }
     }
 }
@@ -40,8 +48,12 @@ impl<'a> App<'a> {
 
     /// Initiate logger and event threads.
     pub fn init(&self, tick_rate: u64) -> GameResult<()> {
+        // start event threads
         self.events.start(tick_rate)?;
-        // TODO add logger initiation here.
+        // start event logging
+        tui_logger::init_logger(log::LevelFilter::Trace).unwrap();
+        tui_logger::set_default_level(log::LevelFilter::Trace);
+        info!(target: "info", "Game initiation complete.");
         Ok(())
     }
 
@@ -74,5 +86,9 @@ impl<'a> App<'a> {
     /// Draw current scene.
     pub fn render<B: Backend>(&mut self, frame: &mut Frame<'_, B>) {
         self.scene.render(frame);
+
+        if self.show_log {
+            show_popup("Log", LogPopup::widget(), frame)
+        }
     }
 }

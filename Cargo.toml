@@ -17,3 +17,5 @@ serde = { version = "1.0.164", features = ["derive"] }
 tokio = { version = "1.29.1", features = ["full"] }
 toml = "0.7.5"
 tui = { package = "ratatui", version = "0.22" }
+log = "0.4.20"
+tui-logger = { version = "0.9.4", features = ["ratatui-support"] }
